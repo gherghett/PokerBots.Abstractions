@@ -45,7 +45,3 @@ jobs:
         # --source specifies the nuget.org API endpoint.
         # --api-key uses the secret API key you added to GitHub.
         run: dotnet nuget push nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
-        env:
-          # You might want to include the username if the source requires it (nuget.org usually doesn't for the API key)
-          # NUGET_USERNAME: 'gherghett'
-          # NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }} # This can also work if you configure a NuGet.Config that maps this
