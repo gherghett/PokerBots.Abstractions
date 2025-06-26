@@ -7,7 +7,7 @@
 
     <!-- NuGet Package Properties -->
     <PackageId>PokerBots.Abstractions</PackageId>
-    <Version>1.0.0</Version> <!-- IMPORTANT: Increment this version for every new package release! -->
+    <Version>1.0.1</Version> <!-- IMPORTANT: Increment this version for every new package release! -->
     <Authors>gherghett</Authors>
     <Company>YourCompanyOrName</Company>
     <Description>Abstract interfaces and types for PokerBots.</Description>
