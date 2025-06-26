@@ -1,0 +1,52 @@
+name: Publish PokerBots.Abstractions NuGet Package
+
+on:
+  push:
+    branches:
+      - master # Trigger a build and publish when changes are pushed to the 'master' branch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest # Use an Ubuntu runner
+
+    # Define permissions for the GITHUB_TOKEN
+    permissions:
+      contents: read   # Required to checkout the repository code
+      packages: write  # Crucial: Grants read/write access to GitHub Packages for publishing
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3 # Action to checkout your code into the runner
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4 # Action to set up the .NET environment
+        with:
+          dotnet-version: '9.0.x' # Specify the .NET SDK version
+
+      - name: Restore NuGet dependencies
+        run: dotnet restore
+        # Configure NuGet to authenticate with GitHub Packages during restore if needed
+        # (useful if you consume private packages from GitHub, or for consistency)
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_USERNAME: 'gherghett' # Replace with your GitHub username/organization
+
+      - name: Build the project
+        run: dotnet build --configuration Release --no-restore # Build the project in Release mode
+
+      - name: Pack the NuGet package
+        # This command creates the .nupkg file.
+        # --no-build ensures we use the artifacts from the previous build step.
+        # -o nupkg specifies the output directory for the .nupkg file.
+        run: dotnet pack --configuration Release -o nupkg --no-build
+
+      - name: Publish NuGet package to GitHub Packages
+        # This command pushes the generated .nupkg file to your GitHub Packages feed.
+        # --source specifies the URL of your GitHub Packages feed.
+        # --api-key uses the automatically provided GITHUB_TOKEN for authentication.
+        run: dotnet nuget push nupkg/*.nupkg --source https://nuget.pkg.github.com/gherghett/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        env:
+          # These environment variables are standard for NuGet authentication.
+          # Though --api-key is direct, having these can also help with some NuGet client behaviors.
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_USERNAME: 'gherghett' # Ensure this matches the owner of the package feed
